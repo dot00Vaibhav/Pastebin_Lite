@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PasteBin Lite</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f4f4f4;
+    }
+
+    textarea {
+      width: 100%;
+      height: 200px;
+      margin-bottom: 10px;
+    }
+
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+    }
+
+    button {
+      cursor: pointer;
+      background: #007bff;
+      color: white;
+      border: none;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Create Paste</h1>
+
+  <textarea id="content" placeholder="Enter your text here..."></textarea>
+
+  <input type="number" id="expiry" placeholder="Expire after minutes (optional)">
+  <input type="number" id="maxViews" placeholder="Max views (optional)">
+
+  <button onclick="createPaste()">Create Paste</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    async function createPaste() {
+      const content = document.getElementById("content").value;
+      const expiryMinutes = document.getElementById("expiry").value;
+      const maxViews = document.getElementById("maxViews").value;
+
+      const res = await fetch("/api/paste", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          content,
+          expiryMinutes,
+          maxViews
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        document.getElementById("result").innerHTML = `
+          Paste created:<br>
+          <a href="${data.url}" target="_blank">${data.url}</a>
+        `;
+      } else {
+        document.getElementById("result").innerText = data.error;
+      }
+    }
+  </script>
+
+</body>
+</html>

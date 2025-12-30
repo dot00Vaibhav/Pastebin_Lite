@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View Paste</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f9f9f9;
+    }
+
+    pre {
+      background: #eee;
+      padding: 20px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Paste Content</h1>
+  <pre id="content">Loading...</pre>
+
+  <script>
+    const shortId = window.location.pathname.replace("/", "");
+
+    if (!shortId) {
+      document.getElementById("content").innerText = "Invalid URL";
+    } else {
+      fetch(`/api/paste/${shortId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            document.getElementById("content").innerText = data.error;
+          } else {
+            document.getElementById("content").innerText = data.content;
+          }
+        })
+        .catch(() => {
+          document.getElementById("content").innerText = "Error loading paste.";
+        });
+    }
+  </script>
+
+</body>
+</html>
